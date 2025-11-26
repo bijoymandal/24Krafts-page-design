@@ -14,7 +14,7 @@ class _StreamingBannerState extends State<StreamingBanner> {
   int _currentPage = 0;
   Timer? _timer;
 
-  // 3 Premium High-Quality Banner Images (Free to use)
+  // Banner items
   final List<Map<String, String>> _banners = const [
     {
       "image": "assets/images/movie_banner.png",
@@ -38,7 +38,7 @@ class _StreamingBannerState extends State<StreamingBanner> {
     super.initState();
     _pageController = PageController();
 
-    // Auto-slide every 4 seconds
+    // Auto slide
     _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
       if (!mounted) return;
 
@@ -65,7 +65,7 @@ class _StreamingBannerState extends State<StreamingBanner> {
       height: 190,
       child: Stack(
         children: [
-          // PageView with banners
+          // Banner slider
           PageView.builder(
             controller: _pageController,
             itemCount: _banners.length,
@@ -82,7 +82,7 @@ class _StreamingBannerState extends State<StreamingBanner> {
             },
           ),
 
-          // Dots Indicator at bottom
+          // Dots
           Positioned(
             bottom: 16,
             left: 0,
@@ -109,6 +109,7 @@ class _StreamingBannerState extends State<StreamingBanner> {
     );
   }
 
+  // Single Banner Item
   Widget _buildBannerItem({
     required String imageUrl,
     required String title,
@@ -119,11 +120,11 @@ class _StreamingBannerState extends State<StreamingBanner> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         image: DecorationImage(
-          image: NetworkImage(imageUrl),
+          image: AssetImage(imageUrl), // FIXED
           fit: BoxFit.cover,
           colorFilter: ColorFilter.mode(
-            Colors.black.withOpacity(0.3),
-            BlendMode.dstATop,
+            Colors.black.withOpacity(0.35),
+            BlendMode.darken,
           ),
         ),
       ),

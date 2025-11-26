@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 
 class MovieProjectCard extends StatelessWidget {
   final String title;
-  final String subtitle; // e.g., "Drama • 2024"
-  final String status; // e.g., "In Production"
+  final String subtitle;
+  final String status;
   final Color statusColor;
-  final String bannerImageUrl; // Full top banner image
+  final String bannerImageUrl;
+
+  // NEW PARAM: pass any icon widget (Icon, AppIcon, ImageIconWidget, etc.)
+  final Widget? trailingIcon;
 
   const MovieProjectCard({
     super.key,
@@ -15,6 +18,7 @@ class MovieProjectCard extends StatelessWidget {
     required this.status,
     required this.statusColor,
     required this.bannerImageUrl,
+    this.trailingIcon, // new
   });
 
   @override
@@ -35,10 +39,10 @@ class MovieProjectCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // FULL BANNER IMAGE (Top Part)
+          // Banner Image
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            child: Image.network(
+            child: Image.asset(
               bannerImageUrl,
               height: 180,
               width: double.infinity,
@@ -46,7 +50,7 @@ class MovieProjectCard extends StatelessWidget {
             ),
           ),
 
-          // BOTTOM CONTENT
+          // Content
           Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -63,16 +67,17 @@ class MovieProjectCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
 
-                // Subtitle (Genre + Year)
+                // Subtitle
                 Text(
                   subtitle,
                   style: const TextStyle(fontSize: 15, color: Colors.grey),
                 ),
                 const SizedBox(height: 16),
 
-                // Status Chip with Play Icon
+                // Status + Custom Icon Button
                 Row(
                   children: [
+                    // Status Chip
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 14,
@@ -83,7 +88,6 @@ class MovieProjectCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(30),
                       ),
                       child: Row(
-                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
                             Icons.play_circle_fill,
@@ -105,12 +109,8 @@ class MovieProjectCard extends StatelessWidget {
 
                     const Spacer(),
 
-                    // Heart Icon (Favorite)
-                    Icon(
-                      Icons.favorite_border,
-                      color: Colors.grey.shade600,
-                      size: 26,
-                    ),
+                    // Custom Icon Here (optional)
+                    trailingIcon ?? const SizedBox(),
                   ],
                 ),
               ],
