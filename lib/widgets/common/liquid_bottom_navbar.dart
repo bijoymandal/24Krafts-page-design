@@ -1,4 +1,3 @@
-// lib/widgets/common/liquid_bottom_navbar.dart
 import 'package:flutter/material.dart';
 
 class LiquidBottomNavBar extends StatelessWidget {
@@ -12,84 +11,99 @@ class LiquidBottomNavBar extends StatelessWidget {
   });
 
   static const List<Map<String, dynamic>> _items = [
-    {"icon": Icons.home_rounded, "label": "Home"},
     {"icon": Icons.people_rounded, "label": "Members"},
     {"icon": Icons.calendar_today_rounded, "label": "Schedule"},
+    {"icon": Icons.home_rounded, "label": "Home"},
     {"icon": Icons.work_rounded, "label": "Jobs"},
+    {"icon": Icons.message_rounded, "label": "Messages"},
   ];
 
   @override
   Widget build(BuildContext context) {
-    // Auto-adjust height for small devices
-    final double height = MediaQuery.of(context).size.height < 700
-        ? 68.0
-        : 76.0;
+    final bottomInset = MediaQuery.of(context).padding.bottom;
 
     return Container(
-      height: height,
       decoration: const BoxDecoration(
-        color: Color(0xFF9C27B0),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        color: Color(0xFF9333EA),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
         boxShadow: [
           BoxShadow(
             color: Colors.black26,
-            blurRadius: 16,
-            offset: Offset(0, -6),
+            blurRadius: 20,
+            offset: Offset(0, -8),
           ),
         ],
       ),
       child: SafeArea(
         top: false,
-        child: Row(
-          children: _items.asMap().entries.map((entry) {
-            final int index = entry.key;
-            final bool isActive = currentIndex == index;
+        child: SizedBox(
+          height: 36 + bottomInset, // Final safe height
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Row(
+              children: _items.asMap().entries.map((entry) {
+                final index = entry.key;
+                final active = currentIndex == index;
 
-            return Expanded(
-              child: InkWell(
-                onTap: () => onTap(index),
-                child: SizedBox(
-                  height: double.infinity,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Icon
-                      Icon(
-                        _items[index]["icon"],
-                        size: isActive ? 26 : 23,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(height: 2), // Super minimal spacing
-                      // Label
-                      Text(
-                        _items[index]["label"],
-                        style: TextStyle(
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: () => onTap(index),
+                    behavior: HitTestBehavior.opaque,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          entry.value["icon"],
+                          size: active ? 28 : 24,
                           color: Colors.white,
-                          fontSize: isActive ? 11 : 9.5,
-                          fontWeight: isActive
-                              ? FontWeight.bold
-                              : FontWeight.w500,
-                          height: 1.0, // Removes hidden line padding
                         ),
-                      ),
+                        const SizedBox(height: 1),
 
-                      // Active Dot — Only when active
-                      if (isActive)
-                        Container(
-                          margin: const EdgeInsets.only(top: 4),
-                          width: 4.5,
-                          height: 4.5,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
+                        // Label auto fits - no overflow
+                        Flexible(
+                          child: FittedBox(
+                            child: Text(
+                              entry.value["label"],
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: active ? 12 : 11,
+                                fontWeight: active
+                                    ? FontWeight.bold
+                                    : FontWeight.w500,
+                              ),
+                              maxLines: 1,
+                            ),
                           ),
                         ),
-                    ],
+
+                        const SizedBox(height: 1),
+
+                        // Active dot (doesn't take layout height when inactive)
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 250),
+                          height: active ? 6 : 0,
+                          width: active ? 6 : 0,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: active
+                                ? const [
+                                    BoxShadow(
+                                      color: Colors.white54,
+                                      blurRadius: 4,
+                                      spreadRadius: 1,
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
-            );
-          }).toList(),
+                );
+              }).toList(),
+            ),
+          ),
         ),
       ),
     );
