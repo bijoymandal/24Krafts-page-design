@@ -51,7 +51,7 @@ class _AadhaarVerificationScreenState extends State<AadhaarVerificationScreen> {
 
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(builder: (_) => const HomeScreen(initialIndex: 2)),
         (route) => false,
       );
     });
