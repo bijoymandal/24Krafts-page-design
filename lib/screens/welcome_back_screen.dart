@@ -1,4 +1,6 @@
+import 'package:crafts/core/utils/app_notifications.dart';
 import 'package:crafts/screens/otp_verification_screen.dart';
+import 'package:flutter/foundation.dart'; // ← Add this import
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/auth_bloc.dart';
@@ -17,16 +19,45 @@ class WelcomeBackScreen extends StatelessWidget {
     return BlocProvider(
       create: (_) => AuthBloc(),
       child: BlocListener<AuthBloc, AuthState>(
-        listenWhen: (previous, current) => current.otpSent && !previous.otpSent,
+        listenWhen: (previous, current) =>
+            current.otpSent != previous.otpSent ||
+            current.errorMessage != previous.errorMessage,
+
         listener: (context, state) {
-          // This runs ONLY when Send OTP is clicked
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) =>
-                  OtpVerificationScreen(phoneNumber: state.phoneNumber),
-            ),
-          );
+          // === ERROR ===
+          if (state.errorMessage?.isNotEmpty == true) {
+            AppNotifications.showError(context, state.errorMessage!);
+            return;
+          }
+
+          // === SUCCESS - OTP SENT ===
+          if (state.otpSent && state.phoneNumber.isNotEmpty) {
+            // Build success message
+            String message = "OTP sent successfully!";
+
+            // Only show actual OTP in debug mode (for testing)
+            if (kDebugMode && state.lastSentOtp?.isNotEmpty == true) {
+              message =
+                  "OTP: ${state.lastSentOtp!}  (sent to ${state.phoneNumber})";
+            }
+
+            AppNotifications.showSuccess(context, message);
+
+            // Navigate after user sees the OTP (especially useful in debug)
+            Future.delayed(const Duration(milliseconds: 1500), () {
+              if (!context.mounted) return;
+
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (_) =>
+                      OtpVerificationScreen(number: state.phoneNumber),
+                ),
+                (route) => false,
+              );
+            });
+          }
         },
+
         child: Scaffold(
           backgroundColor: Colors.white,
           body: SafeArea(
