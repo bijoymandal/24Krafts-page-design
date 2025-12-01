@@ -1,8 +1,9 @@
-import 'package:crafts/widgets/complete_profile_screen.dart';
+import 'package:crafts/widgets/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class SliderScreen extends StatefulWidget {
-  const SliderScreen({super.key});
+  final String phoneNumber;
+  const SliderScreen({super.key, required this.phoneNumber});
 
   @override
   State<SliderScreen> createState() => _SliderScreenState();
@@ -40,7 +41,9 @@ class _SliderScreenState extends State<SliderScreen> {
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const CompleteProfileScreen()),
+        MaterialPageRoute(
+          builder: (_) => HomeScreen(number: widget.phoneNumber),
+        ),
       );
     }
   }
@@ -118,8 +121,9 @@ class _SliderScreenState extends State<SliderScreen> {
                                   onTap: () => Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) =>
-                                          const CompleteProfileScreen(),
+                                      builder: (_) => HomeScreen(
+                                        number: widget.phoneNumber,
+                                      ),
                                     ),
                                   ),
                                   child: const Text(
